@@ -1,0 +1,14 @@
+version: '3'
+services: 
+  web:
+    build: .
+    ports: 
+      - "8080:8080"
+    environment: 
+      PORT: 8080
+    volumes:
+      - sync-data:/app
+
+volumes: 
+  sync-data:
+    external: true
