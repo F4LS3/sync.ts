@@ -1,3 +1,4 @@
 node_modules/
-compile/
+compile/videos/
+compile/*.js
 data/
