@@ -1,14 +1,24 @@
-version: '3'
+version: '3.1'
 services: 
   web:
     build: .
     ports: 
-      - "8080:8080"
+      - "80:8080"
     environment: 
       PORT: 8080
+      DB_USERNAME: sync
+      DB_PASSWORD: linusE123
+      DB_DATABASE: sync
+    restart: always
+    links:
+      - database
+    depends_on:
+      - database
+  database:
+    image: mongo
     volumes:
-      - sync-data:/app
-
-volumes: 
-  sync-data:
-    external: true
+      - './data:/data/db'
+    ports:
+      - "27017:27017"
+    restart: always
+    command: [--auth]
