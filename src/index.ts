@@ -21,7 +21,10 @@ app.use(express.json());
 app.use(express.static(`${__dirname}/public/`));
 app.use(fileUpload());
 app.use(async (req, res, next) => {
+    if(req.path.startsWith('settings/')) return next();
+
     const ip = req.connection.remoteAddress.replace('::ffff:', '');
+    console.log(ip);
     
     const device: Device = await deviceModel.findOne({ ip: ip });
 
@@ -53,7 +56,13 @@ app.post('/settings/upload', async (req, res) => {
         currentVideoBuffer: 0,
         devices: [{
             deviceID: 0,
+            deviceName: 'localhost',
             ip: "127.0.0.1"
+        },
+        {
+            deviceID: 1,
+            deviceName: 'localhost',
+            ip: "::1"
         }]
     };
 
@@ -67,11 +76,12 @@ app.get('/settings', (req, res) => {
 app.get('/createReadStream', async (req, res) => {
     const group: Group = await groupModel.findOne({ "devices.deviceID": req.device.deviceID });
 
-    if(!group) return res.status(400).send({ status: 400, message: "group isn't assigned to any group" });
-    if(!req.headers.range) return res.status(400).send({ status: 400, message: 'no range header found' });
+    if(!group) return res.status(400).send({ status: 400, message: "device isn't assigned to any group" });
+    //if(!req.headers.range) return res.status(400).send({ status: 400, message: 'no range header found' });
 
     const videoPath = `${__dirname}/videos/${group.groupName}/${group.groupName}_${group.currentVideoBuffer}.mp4`;
-    const chunkSize = 10 ** 6;
+    res.status(200).sendFile(videoPath);
+    /*const chunkSize = 10 ** 6;
     const size = statSync(videoPath).size;
     
     const start = Number(req.headers.range.replace(/\D/g, ''));
@@ -87,7 +97,31 @@ app.get('/createReadStream', async (req, res) => {
         "Content-Type": 'video/mp4'
     });
 
-    readStream.pipe(res);
+    readStream.pipe(res);*/
+});
+
+app.post('/settings/devices/register', async (req, res) => {
+    if(!req.body.deviceName) return res.status(400).send({ status: 400, message: 'no device name found' });
+    if(!req.body.deviceIP) return res.status(400).send({ status: 400, message: 'no device ip found' });
+
+    const device: Device = {
+        deviceID: await deviceModel.countDocuments(),
+        deviceName: req.body.deviceName,
+        ip: req.body.deviceIP
+    };
+
+    new deviceModel(device).save((error, result) => {
+        if(error) return res.status(400).send({ status: 400, message: 'device already registered' });
+        res.status(200).send({ status: 200, message: result });
+    });
+});
+
+app.post('/settings/devices/delete', async (req, res) => {
+    if(!req.body.deviceID) return res.status(400).send({ status: 400, message: 'no device id found' });
+
+    deviceModel.deleteOne({ deviceID: req.body.deviceID }).catch(err => {
+        return res.status(500).send({ status: 500, message: err })
+    }).then(() => res.status(200).send({ status: 200, message: 'device has been deleted' }));
 });
 
 app.listen(port, () => {
@@ -99,7 +133,6 @@ setInterval(async () => {
 
     all.forEach(async (group: Group) => {
         await groupModel.updateOne({ groupID: group.groupID }, { currentVideoBuffer: group.currentVideoBuffer == group.videoBuffer - 1 ? 0 : group.currentVideoBuffer + 1 });
-        console.log("Updated");
     });
 }, 10000);
 

@@ -28,8 +28,9 @@ export const groupSchema = new mongoose.Schema<Group>({
 });
 
 export const deviceSchema = new mongoose.Schema<Device>({
-    deviceID: { type: Number, required: true },
-    ip: { type: String, required: true }
+    deviceID: { type: Number, required: true, unique: true },
+    deviceName: { type: String, required: true },
+    ip: { type: String, required: true, unique: true }
 });
 
 export const groupModel = mongoose.model("groups", groupSchema);

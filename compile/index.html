@@ -7,14 +7,19 @@
     <title>Document</title>
 </head>
 <body>
-    <video class="player" controls muted autoplay preload="metadata">
-        <source src="/createReadStream" type="video/mp4">
+    <video class="player" controls muted autoplay>
+        <source src="createReadStream/" type="video/mp4">
     </video>
 
     <script>
-        const video = document.querySelector('.player');
+        const video = document.createElement('video');
 
-        video.onended = () => video.load();
+        video.onended = async () => {
+            /*const blob = await fetch('createReadStream/').then(res => res.blob());
+            console.log(blob);*/
+
+            video.load();
+        };
     </script>
 </body>
 </html>

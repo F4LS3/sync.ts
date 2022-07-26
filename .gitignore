@@ -1,4 +1,5 @@
 node_modules/
 compile/videos/
-compile/*.js
+compile/public/*.js
+compile/settings/*.js
 data/

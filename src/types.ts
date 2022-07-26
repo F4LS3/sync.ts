@@ -10,5 +10,6 @@ export type Group = {
 
 export type Device = {
     deviceID: number,
+    deviceName: string
     ip: string
 };
