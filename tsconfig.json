@@ -2,8 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "esModuleInterop": true,
-        "target": "es6",
-        "noImplicitAny": true,
+        "target": "ESNext",
+        "noImplicitAny": false,
         "moduleResolution": "node",
         "sourceMap": false,
         "outDir": "compile",

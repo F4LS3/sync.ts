@@ -3,8 +3,8 @@ export type Group = {
     groupName: string,
     video: string,
     duration: number,
-    videoTime: number,
-    master: Device,
+    videoBuffer: number,
+    currentVideoBuffer: number,
     devices: Device[]
 };
 

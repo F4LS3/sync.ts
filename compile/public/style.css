@@ -1,11 +1,5 @@
 body {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-template-rows: minmax(100px, auto);
-}
-
-#file-upload-form {
-    grid-column: 3 / 5;
-    grid-row: 58;
 }

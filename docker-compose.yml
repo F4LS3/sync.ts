@@ -9,6 +9,7 @@ services:
       DB_USERNAME: sync
       DB_PASSWORD: linusE123
       DB_DATABASE: sync
+      DB_HOST: database
     restart: always
     links:
       - database
